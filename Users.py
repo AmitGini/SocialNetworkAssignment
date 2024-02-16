@@ -1,47 +1,53 @@
+from PostFactory import PostFactory
+
+
 class Users:
-    _username = None
-    _password = None
-    _connected = None
-    _followers = None
-    _posts = None
+    __username = None
+    __password = None
+    __connected = None
+    __followers = None
+    __posts = None
 
     def __init__(self, username, password):
-        self._username = username
-        self._password = password
-        self._connected = True
-        self._followers = set()
-        # self._posts = dict()
+        self.__username = username
+        self.__password = password
+        self.__connected = True
+        self.__followers = set()
+        self.__posts = list()
 
     def check_password(self, password):
-        if self._password == password:
+        if self.__password == password:
             return True
         else:
             return False
 
     def is_connected(self):
-        return self._connected
+        return self.__connected
 
     def get_username(self):
-        return self._username
+        return self.__username
 
     def connect(self):
-        self._connected = True
-        print("Entered the connect method in Users class")
+        self.__connected = True
 
     def disconnect(self):
-        self._connected = False
-        print("Entered the disconnect method in Users class")
+        self.__connected = False
 
     def follow(self, user):
         # Since it's a set, there is no duplicate values, so there is no need to check if the user already following
-        self._followers.add(user.get_username())
-        print(self._username + " has followed " + user.get_username())
+        self.__followers.add(user.get_username())
+        print(self.__username + " has followed " + user.get_username())
 
     def unfollow(self, user):
         # Since it's a set, there is no duplicate values, so there is no neet to check if the user already following
         # username The validation of the username, done in the SocialNetwork
-        if user in self._followers:
-            self._followers.remove(user.get_username())
-            print(self._username + " has unfollowed " + user.get_username())
+        if user in self.__followers:
+            self.__followers.remove(user.get_username())
+            print(self.__username + " has unfollowed " + user.get_username())
 
-
+    def publish_post(self, post_type, *args):
+        if args is not None and len(args) > 0:
+            post = PostFactory.create_post(self, post_type, *args)
+            self.__posts.append(post)
+            return post
+        return None
