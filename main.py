@@ -49,26 +49,26 @@ def main():
     p3.comment(u2, "Exorbitant price")
     print()
     #
-    # # Price reduction of the product for sale
-    # p3.discount(10, "pass3")
-    # print()
-    #
+    # Price reduction of the product for sale
+    p3.discount(10, "pass3")
+    print()
+
     # more likes and comments
     p3.like(u2)
     p3.comment(u2, "Can you give me your phone number?")
     p3.comment(u4, "+97255576433")
     print()
-    #
-    # # Defining the product as sold
-    # p3.sold("pass3")
-    # print()
-    #
-    # print(p3)
-    #
-    # # Displaying the image of the post
-    # p2.display()
-    # print()
-    #
+
+    # Defining the product as sold
+    p3.sold("pass3")
+    print()
+
+    print(p3)
+
+    # Displaying the image of the post
+    p2.display()
+    print()
+
     p2.comment(u5, "Amazing picture!")
     print()
     #
@@ -81,21 +81,21 @@ def main():
     network.log_out("Charlie")
     network.log_in("Charlie", "pass3")
     print()
-    #
-    # # User printing
-    # print(u1)
-    # print()
-    #
-    # # Post printing
-    # print(p1)
-    # print(p2)
-    #
-    # # Printing all notifications received by a certain user
-    # u4.print_notifications()
-    # print()
-    #
-    # # Network printing
-    # print(network, end='')
+
+    # User printing
+    print(u1)
+    print()
+
+    # Post printing
+    print(p1)
+    print(p2)
+
+    # Printing all notifications received by a certain user
+    u4.print_notifications()
+    print()
+
+    # Network printing
+    print(network, end='')
 
 
 if __name__ == '__main__':

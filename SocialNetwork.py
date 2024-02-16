@@ -2,6 +2,8 @@
 from Users import Users
 
 
+# todo: DESCRIPTION
+
 class SocialNetwork:
     _instance = None
 
@@ -13,13 +15,22 @@ class SocialNetwork:
             cls._instance = super(SocialNetwork, cls).__new__(cls)  # SocialNetwork single instance initialize
             cls._network_name = name  # network name initialize
             # User dictionary initialize
-            # _user_data -> [ ( key = username : value = (user(Object)) ) ]
+            # _user_data -> [ key = username : value = user(Object) ]
             cls._users_data = dict()
             print("The social network {network_name} was created!".format(network_name=name))
             return cls._instance
         else:
             print("Network Already Exists, Creation Failed!")
             return None
+
+    # Special method being overridden, to print the data as required.
+    # Printing each user data, implement in user class
+    def __str__(self):
+        social_network_data = ""
+        for user in self._users_data:
+            social_network_data += str(self._users_data[user])  # Ensure string representation using casting
+            social_network_data += "\n"  # Add a newline as a separator between users
+        return social_network_data
 
     # Create new user to the social network
     def sign_up(self, username, password):
@@ -40,6 +51,8 @@ class SocialNetwork:
             print("{} is in Use, Please try Different Username!".format(username))
             return None
 
+
+    # todo: DESCRIPTION
     def log_in(self, username, password):
         # Check if there is such username id the data
         if self._users_data.get(username) is not None:
@@ -60,6 +73,8 @@ class SocialNetwork:
         print("{} Invalid Username or Password, Please try again Or Sign up".format(username))
         return None
 
+
+    # todo: DESCRIPTION
     def log_out(self, username):
         # Check if there is such username id the data
         if self._users_data.get(username) is not None:
