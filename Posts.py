@@ -1,3 +1,6 @@
+from error.NotConnectedError import NotConnectedError
+from error.UserActionsError import UserActionsError
+
 
 # todo: add description
 class Posts:
@@ -14,14 +17,12 @@ class Posts:
     def like(self, user):
         if user.is_connected:
             if user.username not in self._likes:
-                # todo : NEED TO BE CHANGE TO NOTIFICATIONS
                 self._likes.add(user.username)
-                print("NOTIFICATION: {user_liked} Liked Your Post".format(user_liked=user.username))
+                self._user.notification.update("{user} liked your post".format(user=user.username))
             else:
-                # todo : NEED TO BE CHANGE TO NOTIFICATIONS
-                print("You've already liked")
+                raise UserActionsError("RepeatLike")
         else:
-            print("{username} Not Connected!".format(username=user.username))
+            raise NotConnectedError()
 
 
     # todo: DESCRIPTION
@@ -29,14 +30,11 @@ class Posts:
         if user.is_connected:
             if comment_data is not None:
                 self._comments.append((user.username, comment_data))
-                # todo : NEED TO BE CHANGE TO NOTIFICATIONS
-                print("NOTIFICATION: {username} Comment Your Post".format(username=user.username))
-
+                self._user.notification.update("{user} commented on your post".format(user=user.username))
             else:
-                print("Comment must contain at least one characters")
-
+                raise UserActionsError("EmptyComment")
         else:
-            "{username} Not Connected!".format(username=user.username)
+            raise NotConnectedError()
 
     def __str__(self):
         pass

@@ -1,11 +1,15 @@
+from error.NotificationError import NotificationError
+
+
 class Notifier:
 
     def __init__(self):
-        self._watchers = list()
+        self._watchers = set()
 
     def add_watcher(self, watcher):
         if watcher is not None:
-            self._watchers.append(watcher)
+            # No need to check if watcher already in the set, since there cant be duplicate values
+            self._watchers.add(watcher)
 
     def remove_watcher(self, watcher):
         if watcher is not None:
@@ -13,9 +17,16 @@ class Notifier:
                 self._watchers.remove(watcher)
 
             except:
-                raise ValueError("Error! {watcher} was not following".format(wacher=watcher.username))
+                raise NotificationError(watcher)
 
-    def notify_watchers(self, message):
-        if message is not None:
+    def notify_watcher(self, watcher, message):
+        if watcher is not self and message is not None:
+            watcher.notification.update(message)
+        else:
+            raise NotificationError(watcher)
+
+    def notify_all_watchers(self, message):
+        if message is not None and len(self._watchers) > 0:
             for watcher in self._watchers:
-                watcher.update(message)
+                watcher.notification.update(message)
+                print(self.username, message)

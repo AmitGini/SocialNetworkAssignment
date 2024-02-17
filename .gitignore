@@ -1,6 +1,10 @@
-Assignment 2 - Design patterns.pdf
-auto_check.py
+unrelated/Assignment 2 - Design patterns.pdf
+unrelated/auto_check.py
 image1.jpg
-output.txt
-.venv
+unrelated/output.txt
+main.py
 .gitignore
+.venv
+unrelated
+.idea
+__pycache__

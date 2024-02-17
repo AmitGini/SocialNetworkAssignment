@@ -1,12 +1,15 @@
-from ImagePost import ImagePost
-from SalePost import SalePost
-from TextPost import TextPost
+from post.ImagePost import ImagePost
+from post.SalePost import SalePost
+from post.TextPost import TextPost
 
 
 # todo: DESCRIPTION
 class PostFactory:
     @staticmethod
     def create_post(user, post_type, *args):
+        if args is None:
+            raise
+
         # Validation arguments, user, type, args
         if not user:
             raise ValueError("User is required to publish a post.")

@@ -1,6 +1,11 @@
-from error.CustomError import CustomError
+class NotConnectedError(Exception):
+    """
+        Raised when an invalid input is entered or invalid argument passed
 
+        Attributes:
 
-class NotConnectionError(CustomError):
-    def __init__(self, message = "User is Not Connected, Try Log in"):
+            message -- explanation of the error
+
+    """
+    def __init__(self, message="User is Not Connected, Try Log in"):
         super().__init__(message)

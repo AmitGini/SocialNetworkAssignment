@@ -1,99 +1,129 @@
-from PostFactory import PostFactory
+from error.NotConnectedError import NotConnectedError
+from error.UserActionsError import UserActionsError
+from notification.Notification import Notification
+from notification.Notifier import Notifier
+from post.PostFactory import PostFactory
 
-# todo: add description
-class Users:
-    # todo: add description
-    __username = None
-    __password = None
-    __connected = None
-    __followers = None
-    __posts = None
+
+class Users(Notifier):
 
     # todo: add description
     def __init__(self, username, password):
-        self.__username = username
-        self.__password = password
+        super().__init__()
+        self.username = username
+        self.notification = Notification()
+        self.__password_encode = password.encode('utf-8')
         self.__connected = True
-        self.__followers = set()
+        self.__follow = set()
         self.__posts = list()
+
 
     # Special method being overridden, to print the data as required.
     def __str__(self):
         num_posts = len(self.__posts)
-        num_followers = len(self.__followers)
+        num_followers = len(self.__follow)
         return ("User name: {username}, Number of posts: {num_posts}, Number of followers: {num_followers}"
-                .format(username=self.__username, num_posts=num_posts,num_followers=num_followers))
+                .format(username=self.username, num_posts=num_posts, num_followers=num_followers))
 
     # todo: add description
     def check_password(self, password):
-        if self.__password == password:
-            return True
-        else:
-            return False
+        # Layer of protection before decoding the original password
+        if 0 < len(password) <= 8:
+            temp_pass = self.__password_encode.decode('utf-8')
+            # Comparing the password
+            if temp_pass == password:
+                return True
+            else:
+                return False
 
-    # todo: add description
-    def get_username(self):
-        return self.__username
+    # check the connection value, for encapsulation, and understandable code
+    def is_connected(self):
+        return self.__connected
 
-    # todo: add description
+    # Changing the connection value, for encapsulation, and understandable code
     def connect(self):
         self.__connected = True
 
-    # todo: add description
+    # Changing the connection value, for encapsulation, and understandable code
     def disconnect(self):
         self.__connected = False
 
     # todo: add description
-    def is_connected(self):
-        return self.__connected
-
-    # todo: add description
     def follow(self, user):
-        if self.__connected:
-            if user.get_username() in self.__followers:
-                print("{follower} already follow {followed}".format(follower=self.__username,
-                                                                    followed=user.get_username()))
-            # Since it's a set, there is no duplicate values, so there is no need to check if the user already following
-            else:
-                self.__followers.add(user.get_username())
-                print("{follower} started following {followed}".format(follower=self.__username,
-                                                              followed=user.get_username()))
+        # Exceptions Handling:
+        if self.__follow_exceptions(user, "follow"):
+            pass
+        # Follow
         else:
-            print("{username} Not Connected!".format(username=self.__username))  # case where user try to use
-            # function while is not connected
+            # Add to following List
+            self.__follow.add(user.username)
+            # Adding self to user Watcher list
+            # self will be notified when user publish a post
+            user.notification.update(f"{self.username} has started following you.")
+            user.add_watcher(self)
+            print("{follower} started following {followed}".format(follower=self.username,
+                                                                   followed=user.username))
 
-    # todo: add description
+        # todo: add description
     def unfollow(self, user):
-        if self.__connected:
-            # Since it's a set, there is no duplicate values, so there is no neet to check if the user already following
-            # username The validation of the username, done in the SocialNetwork
-            if user.get_username() in self.__followers:
-                self.__followers.remove(user.get_username())
-                print("{follower} unfollowed {followed}".format(follower=self.__username,
-                                                                followed=user.get_username()))
-            else:
-                print("{follower} did not followed {followed}".format(follower=self.__username,
-                                                                      followed=user.get_username()))
+        # Exceptions Handling:
+        if self.__follow_exceptions(user, "unfollow"):
+            pass
+        # UnFollow
         else:
-            print("{username} Not Connected!".format(username=self.__username))  # case where user try to use function while is not connected
+            # Remove from following List
+            self.__follow.remove(user.username)
+            # Remove self from user watcher list
+            # self will not be notified when user publish a post
+            user.remove_watcher(self)
+            print("{follower} unfollowed {followed}".format(follower=self.username,
+                                                            followed=user.username))
 
     # todo: add description
     def publish_post(self, post_type, *args):
-        if self.__connected:
-            post = PostFactory.create_post(self, post_type, *args)
-            if post is not None:
-                self.__posts.append(post)
-                print(post)
-                return post
-            else:
-                print("Try Again!")
-                return None
+        # Case Not Connected
+        if not self.is_connected:
+            raise NotConnectedError()
+
+        # Case connected
         else:
-            print("{username} Not Connected!".format(username=self.__username))
-            return None
+            # Handle None argument in post creation
+            post = PostFactory.create_post(self, post_type, *args)
+            # Added to the posts list
+            self.__posts.append(post)
+            # Sending Notification to all the watcher/followers of mine
+            self.notify_all_watchers("{username} has a new post".format(username=self.username))
+            print(post)
+            return post
 
-
-    # todo: DESCRIPTION
+    # todo: add description
     def print_notifications(self):
-        # todo: INIT FUNCTION
-        print("NOTIFICATION: Function Need to be Added")
+        self.notification.display_notification(self.username)
+
+    # todo: add description
+    def __follow_exceptions(self, user, follow_type):
+        # General Cases
+        # User Connected
+        if not self.is_connected():
+            raise NotConnectedError()
+            # User None
+        elif user is None:
+            raise UserActionsError("NotExist")
+
+        # Follow Case:
+        # Follow itself
+        if follow_type == "follow":
+            if user.username is self.username:
+                raise UserActionsError("FollowSelf")
+            # Follow already being followed
+            if user.username in self.__follow:
+                raise UserActionsError("FollowedAlready")
+
+            # UnFollow Case:
+        else:
+            # UnFollow itself
+            if user.username is self.username:
+                raise UserActionsError("UnfollowSelf")
+            # Not in the Following list, so cant be removed
+            if user.username not in self.__follow:
+                raise UserActionsError("NotFollowed")

@@ -28,7 +28,7 @@ class SocialNetwork:
     def __str__(self):
         social_network_data = ""
         for user in self._users_data:
-            social_network_data += str(self._users_data[user])  # Ensure string representation using casting
+            social_network_data += str(user)  # Ensure string representation using casting
             social_network_data += "\n"  # Add a newline as a separator between users
         return social_network_data
 
@@ -77,12 +77,12 @@ class SocialNetwork:
     # todo: DESCRIPTION
     def log_out(self, username):
         # Check if there is such username id the data
-        if self._users_data.get(username) is not None:
-            user = self._users_data.get(username)
-            if user.is_connected():
-                user.disconnect()
-                print("{} disconnected!".format(username))
+        if username is not None:
+            if username in self._users_data:
+                if self._users_data[username].is_connected():
+                    self._users_data[username].disconnect()
+                    print("{} disconnected!".format(username))
+                else:
+                    print("User Already Disconnected!")
             else:
-                print("User Already Disconnected!")
-        else:
-            print("{} Username was not found!".format(username))
+                print("{} Username was not found!".format(username))
