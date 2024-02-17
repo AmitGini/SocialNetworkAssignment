@@ -10,10 +10,6 @@ TOTAL_PERCENTAGE = 100
 # todo: DESCRIPTION
 
 class SalePost(Posts):
-    __product = None
-    __price = None
-    __location = None
-    __for_sale = None
 
     # todo: DESCRIPTION
     def __init__(self, user, tuple_args):
@@ -27,7 +23,7 @@ class SalePost(Posts):
     def __str__(self):
         return "{username} posted a product for sale:\n" \
                "For sale! {product}, price: {price:.1f}, pickup from: {location}\n".format(
-            username=self._user.get_username(), product=self.__product, price=self.__price, location=self.__location)
+            username=self.publisher_username, product=self.__product, price=self.__price, location=self.__location)
 
     # todo: DESCRIPTION
     def discount(self, discount_rate, password):
@@ -45,7 +41,7 @@ class SalePost(Posts):
             discount = self.__price * (discount_rate / TOTAL_PERCENTAGE)
             self.__price -= discount
             print("Discount on {username} product! the new price is: {price:.1f}".format(
-                username=self._user.get_username(), price=self.__price))
+                username=self.publisher_username, price=self.__price))
 
     # todo: DESCRIPTION
     def sold(self, password):
@@ -53,4 +49,4 @@ class SalePost(Posts):
             print("Invalid password")
         else:
             self.__for_sale = False
-            print("{username} product is sold\n".format(username=self._user.get_username()))
+            print("{username} product is sold\n".format(username=self.publisher_username))

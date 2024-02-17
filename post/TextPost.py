@@ -8,4 +8,4 @@ class TextPost(Posts):
 
     # Special method being overridden, to print the data as required.
     def __str__(self):
-        return "{username} published a post:\n\"{post}\"\n".format(username=self._user.get_username(), post=self._post_data)
+        return "{username} published a post:\n\"{post}\"\n".format(username=self.publisher_username, post=self._post_data)

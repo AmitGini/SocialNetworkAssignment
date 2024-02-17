@@ -12,7 +12,7 @@ class ImagePost(Posts):
 
     # Special method being overridden, to print the data as required.
     def __str__(self):
-        return "{username} posted a picture\n".format(username=self._user.get_username())
+        return "{username} posted a picture\n".format(username=self.publisher_username)
 
     # todo: DESCRIPTION
     def display(self):
