@@ -1,5 +1,6 @@
 # SocialNetwork class - Singleton Design Pattern
 from Users import Users
+from error import SignUpError, SignInError, SignOutError
 
 
 # todo: DESCRIPTION
@@ -17,7 +18,7 @@ class SocialNetwork:
             # User dictionary initialize
             # _user_data -> [ key = username : value = user(Object) ]
             cls._users_data = dict()
-            print("The social network {network_name} was created!".format(network_name=name))
+            print(f"The social network {name} was created!")
             return cls._instance
         else:
             print("Network Already Exists, Creation Failed!")
@@ -26,63 +27,73 @@ class SocialNetwork:
     # Special method being overridden, to print the data as required.
     # Printing each user data, implement in user class
     def __str__(self):
-        social_network_data = ""
-        for user in self._users_data:
-            social_network_data += str(user)  # Ensure string representation using casting
+        social_network_data = f"{self._network_name} social network:\n"
+        for username in self._users_data:
+            social_network_data += str(self._users_data[username])  # Ensure string representation using casting
             social_network_data += "\n"  # Add a newline as a separator between users
         return social_network_data
 
     # Create new user to the social network
     def sign_up(self, username, password):
-        # Checking if there is no other user with the same username
-        if username not in self._users_data:
-            pass_length = len(password)
+        # Exception:
+        # 1. Arguments Validation
+        if username is None or password is None:
+            raise SignUpError
+        # 2. Taken Username Validation
+        elif username in self._users_data:
+            raise SignUpError
+        # 3. Password Validation
+        elif 4 > len(password) or len(password) > 8:
+            raise SignUpError
+        # 4. Invalid Chars Validation (defined like this since I want to make sure the first Exception was checked)
+        elif True:
+            for char in username:
+                if "'" in username or "(" in username or ")" in username or "," in username:
+                    raise SignUpError
 
-            if 4 <= pass_length <= 8:
-                # Adding the user to the social network
-                # _user_data -> [ ( key = username : value = (user(Object)) ) ]
-                concrete_user = Users(username, password)
-                self._users_data[username] = concrete_user
-                return concrete_user
-            else:
-                print("Invalid Password, Please try again!")
-                return None
-        else:
-            print("{} is in Use, Please try Different Username!".format(username))
-            return None
-
+        # Sign Up - If all the Exceptions has Passed
+        # Adding the user to the social network
+        # _user_data -> [ ( key = username : value = (user(Object)) ) ]
+        concrete_user = Users(username, password)
+        self._users_data[username] = concrete_user
+        return concrete_user
 
     # todo: DESCRIPTION
     def log_in(self, username, password):
-        # Check if there is such username id the data
-        if self._users_data.get(username) is not None:
-            # Username exist, we retrieve its data and check if the password is correct
-            user = self._users_data.get(username)
-            # Password Check
-            if user.check_password(password):
-                # Check if the user is already connected
-                if not user.is_connected():
-                    print("{} connected!".format(username))  # connect successfully notification
-                    return  # return the user object
+        # Exceptions:
+        # 1. Arguments Validation
+        if username is None or password is None:
+            raise SignInError
+        # 2. Username Validation (check if username exist and user object exist)
+        elif username not in self._users_data:
+            raise SignInError
+        # 3. Password Validation
+        elif not self._users_data[username].check_password(password):
+            raise SignInError
+        # 4. User Connection Validation
+        elif self._users_data[username].is_connected():
+            raise SignInError('Username is already connected')
 
-                # Already connected Notification
-                else:
-                    print("{} User Already Connected!".format(username))
-
-        # If the username or the password are wrong it will print the following line
-        print("{} Invalid Username or Password, Please try again Or Sign up".format(username))
-        return None
-
+        # Log In
+        else:
+            user = self._users_data[username]
+            user.connect()
+            print(f"{user.username} connected")
 
     # todo: DESCRIPTION
     def log_out(self, username):
-        # Check if there is such username id the data
-        if username is not None:
-            if username in self._users_data:
-                if self._users_data[username].is_connected():
-                    self._users_data[username].disconnect()
-                    print("{} disconnected!".format(username))
-                else:
-                    print("User Already Disconnected!")
-            else:
-                print("{} Username was not found!".format(username))
+        # Exceptions
+        # 1. Username Validation
+        if username is None:
+            raise SignOutError
+        # 2. Username exist Validation
+        elif username not in self._users_data:
+            raise SignOutError
+        # 3. Username Connected Validation
+        elif not self._users_data[username].is_connected():
+            raise SignOutError
+
+        # Log Out
+        else:
+            self._users_data[username].disconnect()
+            print(f"{username} disconnected")

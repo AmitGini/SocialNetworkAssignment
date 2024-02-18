@@ -13,12 +13,18 @@ class Posts:
         self._likes = set()
         self._comments = list(tuple())
 
+    def __str__(self):
+        pass
+
     # todo: add description
     def like(self, user):
         if user.is_connected:
             if user.username not in self._likes:
                 self._likes.add(user.username)
-                self._user.notification.update("{user} liked your post".format(user=user.username))
+                if self._user.username != user.username:
+                    message = f"{user.username} liked your post"
+                    self._user.notification.update(message)
+                    print(f"notification to {self._user.username}: {message}")
             else:
                 raise UserActionsError("RepeatLike")
         else:
@@ -30,13 +36,15 @@ class Posts:
         if user.is_connected:
             if comment_data is not None:
                 self._comments.append((user.username, comment_data))
-                self._user.notification.update("{user} commented on your post".format(user=user.username))
+                if self._user.username != user.username:
+                    message = f"{user.username} commented on your post"
+                    self._user.notification.update(message)
+                    print(f"notification to {self._user.username}: {message}: {comment_data}")
             else:
                 raise UserActionsError("EmptyComment")
         else:
             raise NotConnectedError()
 
-    def __str__(self):
-        pass
+
 
 

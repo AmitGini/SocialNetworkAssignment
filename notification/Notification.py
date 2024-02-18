@@ -13,6 +13,6 @@ class Notification(Watcher):
 
     # Iterate over the notification list and printing them from the first(oldest) to the last(newest)
     def display_notification(self, username):
-        print(f"{username}'s notifications:\n")
+        print(f"{username}'s notifications:")
         for message in self._notify_message:
             print(message)

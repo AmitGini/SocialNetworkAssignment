@@ -21,9 +21,8 @@ class SalePost(Posts):
 
     # Special method being overridden, to print the data as required.
     def __str__(self):
-        return "{username} posted a product for sale:\n" \
-               "For sale! {product}, price: {price:.1f}, pickup from: {location}\n".format(
-            username=self.publisher_username, product=self.__product, price=self.__price, location=self.__location)
+        return (f'{self.publisher_username} posted a product for sale:\nFor sale! {self.__product},'
+                f' price: {self.__price}, pickup from: {self.__location}\n')
 
     # todo: DESCRIPTION
     def discount(self, discount_rate, password):
@@ -40,8 +39,7 @@ class SalePost(Posts):
         else:
             discount = self.__price * (discount_rate / TOTAL_PERCENTAGE)
             self.__price -= discount
-            print("Discount on {username} product! the new price is: {price:.1f}".format(
-                username=self.publisher_username, price=self.__price))
+            print(f"Discount on {self.publisher_username} product! the new price is: {self.__price:.1f}")
 
     # todo: DESCRIPTION
     def sold(self, password):
@@ -49,4 +47,4 @@ class SalePost(Posts):
             print("Invalid password")
         else:
             self.__for_sale = False
-            print("{username} product is sold\n".format(username=self.publisher_username))
+            print(f"{self.publisher_username}'s product is sold")

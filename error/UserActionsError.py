@@ -4,8 +4,7 @@ NOT_EXIST = "Error! User Not Exist"
 # Following Error
 FOLLOW = "Already been Followed"
 NOT_FOLLOWED = "Following never occur Error, Cant Unfollow"
-FOLLOW_SELF = "Error! User Cannot Follow it Self"
-UNFOLLOW_SELF = "Error! User Cannot UnFollow it Self"
+UN_FOLLOWED_SELF = "Error! Attempting Follow/Unfollow your self!"
 # Posts Error
 RE_LIKE = "Error! Already Liked"
 EMPTY_COMMENT = "Error! Trying to comment, to Unknown Post"
@@ -38,12 +37,10 @@ class UserActionsError(Exception):
         # Follow Error
         elif error_type == "FollowedAlready":
             message = FOLLOW
-        elif error_type == "FollowSelf":
-            message = FOLLOW_SELF
         elif error_type == "NotFollowed":
             message = NOT_FOLLOWED
-        elif error_type == "UnfollowSelf":
-            message = UNFOLLOW_SELF
+        elif error_type == "SelfAction":
+            message = UN_FOLLOWED_SELF
         elif error_type == "EmptyComment":
             message = EMPTY_COMMENT
         elif error_type == "RepeatLike":

@@ -29,4 +29,3 @@ class Notifier:
         if message is not None and len(self._watchers) > 0:
             for watcher in self._watchers:
                 watcher.notification.update(message)
-                print(self.username, message)
