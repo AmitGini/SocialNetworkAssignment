@@ -5,7 +5,6 @@ image1.jpg
 unrelated/output.txt
 output.txt
 main.py
-.gitignore
 .venv
 unrelated
 .idea
