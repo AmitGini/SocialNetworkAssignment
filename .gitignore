@@ -1,11 +1,16 @@
-unrelated/Assignment 2 - Design patterns.pdf
-unrelated/auto_check.py
-auto_check.py
-image1.jpg
-unrelated/output.txt
-output.txt
-main.py
+# Folders
+.idea
 .venv
 unrelated
-.idea
 __pycache__
+
+# Pictures
+image1.jpg
+
+# Files
+student_output.txt
+output.txt
+auto_check.py
+main.py
+
+
