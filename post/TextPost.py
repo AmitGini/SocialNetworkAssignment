@@ -5,7 +5,8 @@ from Posts import Posts
 class TextPost(Posts):
     def __init__(self, user, args):
         super().__init__(user, args)
+        print(self)
 
-    # Special method being overridden, to print the data as required.
+    # Special method being overridden, creating custom String for printing
     def __str__(self):
-        return "{username} published a post:\n\"{post}\"\n".format(username=self.publisher_username, post=self._post_data)
+        return f'{self._user.username} published a post:\n{self._post_data}\"\n'

@@ -1,11 +1,15 @@
-from error.NotConnectedError import NotConnectedError
-from error.UserActionsError import UserActionsError
 from notification.Notification import Notification
 from notification.Notifier import Notifier
 from post.PostFactory import PostFactory
 
 
+# todo: add description
+
 class Users(Notifier):
+    __password_encode = None
+    __connected = None
+    __following = None
+    __post = None
 
     # todo: add description
     def __init__(self, username, password):
@@ -18,108 +22,103 @@ class Users(Notifier):
         self.__following = set()
         self.__posts = list()
 
-    # Special method being overridden, to print the data as required.
+    # Special method being overridden, creating custom String for printing
     def __str__(self):
-        num_posts = len(self.__posts)
-        return f"User name: {self.username}, Number of posts: {num_posts}, Number of followers: {self.followers}"
+        num_posts = len(
+            self.__posts)  # Getting the length of the post list, it's the number of posts the notifier published
+        return f"User name: {self.username}, Number of posts: {num_posts}, Number of followers: {self.get_num_subscriber()}"
 
-    # todo: add description
-    def check_password(self, password):
-        # Layer of protection before decoding the original password
-        if 0 < len(password) <= 8:
+    # Password Validation. using decode for compression
+    def password_validation(self, password):
+        try:
+            if 4 < len(password) <= 8:  # Layer of protection before decoding the original password
+                raise WrongPassword
             temp_pass = self.__password_encode.decode('utf-8')
-            # Comparing the password
-            if temp_pass == password:
-                return True
-            else:
-                return False
+            if temp_pass != password:  # Comparing the password
+                raise WrongPassword
+            return True
+        except (WrongPassword, Exception) as e:
+            print(e)
 
     # check the connection value, for encapsulation, and understandable code
     def is_connected(self):
         return self.__connected
 
     # Changing the connection value, for encapsulation, and understandable code
-    def connect(self):
-        self.__connected = True
+    def connect(self, password):
+        try:
+            if password_validation(password) is False:
+                raise WrongPassword
+            self.__connected = True
+            return True
+        except (WrongPassword, Exception) as e:
+            print(e)
 
     # Changing the connection value, for encapsulation, and understandable code
-    def disconnect(self):
-        self.__connected = False
+    def disconnect(self, username):
+        try:
+            if self.username is not username:
+                raise WrongUsername
+            self.__connected = False
+            return True
+        except (WrongUsername, Exception) as e:
+            print(e)
 
-    # todo: add description
+    # Follow method, add to following set and adding to the subscribers
     def follow(self, user):
-        # Exceptions Handling:
-        if self.__follow_exceptions(user, "follow"):
-            pass
+        try:
+            if self.__follow_exceptions(user):  # Exceptions Handling: self connected, user None, self is user
+                pass
+            if user.username in self.__following:  # Check self not following notifier Already
+                raise AlreadyFollowingError(user.username)
+            self.__following.add(user.username)  # Add to following List
+            user.add_subscriber(
+                self)  # adding self from user subscriber list(users to notify by user actions)            print(f"{str(self.username)} started following {user.username}")  # printing the follow action
+        except (AlreadyFollowingError, Exception) as e:
+            print(e)
 
-        # Follow
-        else:
-            # Add to following List
-            self.__following.add(user.username)
-            # Updating the number of user followers
-            user.followers += 1
-            # Adding self to user Watcher list
-            user.add_watcher(self)
-            # self will be notified when user publish a post
-            # user.notification.update(f"{self.username} has started following you.")
-            print(f"{str(self.username)} started following {user.username}")
-
-        # todo: add description
-
+    # UnFollow method,remove from the following set and removing from the subscribers
     def unfollow(self, user):
-        # Exceptions Handling:
-        if self.__follow_exceptions(user, "unfollow"):
-            pass
-
-        # UnFollow
-        else:
-            # Remove from following List
-            self.__following.remove(user.username)
-            # Updating the number of user followers
-            user.followers -= 1
-            # Remove self from user watcher list(users to notify list)
-            user.remove_watcher(self)
-            print(f"{self.username} unfollowed {user.username}")
+        try:
+            if self.__follow_exceptions(user):  # Exceptions Handling: self connected, user None, self is user
+                pass
+            if user.username not in self.__following:  # Check self not following notifier Already
+                raise NotFollowingError(user.username)
+            self.__following.remove(user.username)  # Remove from following List
+            user.remove_subscriber(self)  # Remove self from user subscriber list(users to notify by user actions)
+            print(f"{self.username} unfollowed {user.username}")  # printing the unfollow action
+        except (NotFollowingError, Exception) as e:
+            print(e)
 
     # todo: add description
     def publish_post(self, post_type, *args):
-        # Case Not Connected
-        if not self.is_connected:
-            raise NotConnectedError()
+        try:  # try Exceptions to make sure the program won't stop after encounter problem
+            if not self.is_connected:  # Exception: Case User Not Connected
+                raise NotConnectedError(self.username)
+            post = PostFactory.create_post(self, post_type, *args)  # Creating the post
+            self.__posts.append(post)  # Adding to the posts list
+            self.notify_all_subscriber(f"{self.username} has a new post")  # Sending notification to all the subscribers
+            return post  # Returning the post object
+        except (NotConnectedError, Exception) as e:
+            print(e)
 
-        # Case connected
-        else:
-            # Handle None argument in post creation
-            post = PostFactory.create_post(self, post_type, *args)
-            # Added to the posts list
-            self.__posts.append(post)
-            # Sending Notification to all the watcher/followers of mine
-            self.notify_all_watchers(f"{self.username} has a new post")
-            print(post)
-            return post
-
-    # todo: add description
+    # Printing all the personal notification that related to the post.
     def print_notifications(self):
-        self.notification.display_notification(self.username)
+        try:
+            if not self.is_connected():  # User Connected
+                raise NotConnectedError(self.username)
+            self.notification.display_notification(self.username)
+        except (NotConnectedError, Exception) as e:
+            print(e)
 
-    # todo: add description
-    def __follow_exceptions(self, user, follow_type):
-        # General Cases
-        # User Connected
-        if not self.is_connected():
-            raise NotConnectedError()
-            # User None
-        elif user is None:
-            raise UserActionsError("NotExist")
-        elif self.username == user.username:
-            raise UserActionsError("SelfAction")
-        # Follow Cases:
-        elif follow_type == "follow":
-            # Follow already being followed
-            if user.username in self.__following:
-                raise UserActionsError("FollowedAlready")
-        # UnFollow Cases:
-        elif follow_type == "unfollow":
-            # Not in the Following list, so cant be removed
-            if user.username not in self.__following:
-                raise UserActionsError("NotFollowed")
+    # Exception handling, for follow or unfollow methods
+    def __follow_exceptions(self, user):
+        try:  # Exceptions Handling: self connected, user None, self is user
+            if not self.is_connected():  # User Connected
+                raise NotConnectedError(self.username)
+            elif user is None:  # User None
+                raise UserNotDefinedError
+            elif self.username == user.username:  # User is Self
+                raise UserSubscribeItSelf
+        except (NotConnectedError, UserNotDefinedError, UserSubscribeItSelf, Exception) as e:
+            print(e)

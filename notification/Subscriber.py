@@ -1,3 +1,3 @@
-class Watcher:
+class Subscriber:
     def update(self, message):
         pass

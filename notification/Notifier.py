@@ -1,31 +1,41 @@
-from error.NotificationError import NotificationError
+# todo: add description
+from CustomErrors import SubscriberNotFoundError
 
 
 class Notifier:
+    _subscribers = None
 
     def __init__(self):
-        self._watchers = set()
+        self._subscribers = set()
 
-    def add_watcher(self, watcher):
-        if watcher is not None:
-            # No need to check if watcher already in the set, since there cant be duplicate values
-            self._watchers.add(watcher)
+    # Adding subscribers to the list
+    def add_subscriber(self, subscriber):
+        try:
+            if subscriber is None:  # Making sure subscriber is a valid user
+                raise SubscriberNotFoundError
+            self._subscribers.add(subscriber)  # Since it's a set there cant be duplicate values
+        except (SubscriberNotFoundError, Exception) as e:
+            print(e)
 
-    def remove_watcher(self, watcher):
-        if watcher is not None:
+    # Removing subscribers to the list
+    def remove_subscriber(self, subscriber):
+        try:
+            if subscriber is None:
+                raise SubscriberNotFoundError
+            self._subscribers.remove(subscriber)
+        except (SubscriberNotFoundError, Exception) as e:
+            print(e)
+
+    # Sending notification to all the subscribers of a specific user (all users follow after user)
+    def notify_all_subscriber(self, message):
+        if message is not None and len(self._subscribers) > 0:
             try:
-                self._watchers.remove(watcher)
+                for subscriber in self._subscribers:
+                    subscriber.notification.update(message)
+            except Exception as e:
+                print(e)
+                print("Notify subscribers Failed!")
 
-            except:
-                raise NotificationError(watcher)
-
-    def notify_watcher(self, watcher, message):
-        if watcher is not self and message is not None:
-            watcher.notification.update(message)
-        else:
-            raise NotificationError(watcher)
-
-    def notify_all_watchers(self, message):
-        if message is not None and len(self._watchers) > 0:
-            for watcher in self._watchers:
-                watcher.notification.update(message)
+    # Return the number of subscribers, this is the number of followers
+    def get_num_subscriber(self):
+        return len(self._subscribers)

@@ -1,50 +1,61 @@
+from CustomErrors import SalePostCreationError, WrongPassword, ProductSoldError, InvalidDiscountError
 from Posts import Posts
 
 # todo: DESCRIPTION
-ARGS_INDEX_PRODUCT = 0
-ARGS_INDEX_PRICE = 1
-ARGS_INDEX_LOCATION = 2
+PRODUCT_INDEX = 0
+PRICE_INDEX = 1
+LOCATION_INDEX = 2
 TOTAL_PERCENTAGE = 100
 
 
 # todo: DESCRIPTION
 
 class SalePost(Posts):
+    __for_sale_ = None
 
-    # todo: DESCRIPTION
-    def __init__(self, user, tuple_args):
-        super().__init__(user, tuple_args)
-        self.__product = tuple_args[ARGS_INDEX_PRODUCT]
-        self.__price = tuple_args[ARGS_INDEX_PRICE]
-        self.__location = tuple_args[ARGS_INDEX_LOCATION]
-        self.__for_sale = True
+    # Constructor for sale post, changing the _post_data and adding for sale, for product status
+    def __init__(self, user, *args):
+        try:
+            if len(args[PRODUCT_INDEX]) < 1 or args[PRICE_INDEX] < 1 or len(args[LOCATION_INDEX]) < 1:
+                raise SalePostCreationError
+            super().__init__(user, None)
+            self._post_data: list = [args[PRODUCT_INDEX], args[PRICE_INDEX], args[LOCATION_INDEX]]
+            self.__for_sale = True
+            print(self)
+        except (SalePostCreationError, Exception) as e:
+            print(e)
 
     # Special method being overridden, to print the data as required.
     def __str__(self):
-        return (f'{self.publisher_username} posted a product for sale:\nFor sale! {self.__product},'
-                f' price: {self.__price}, pickup from: {self.__location}\n')
+        sale_status = "For sale!"
+        if not self.__for_sale:
+            sale_status = "Sold!"
+        return (f'{self._user.username} posted a product for sale:\n{sale_status} {self._post_data[PRODUCT_INDEX]},'
+                f' price: {self._post_data[PRICE_INDEX]}, pickup from: {self._post_data[LOCATION_INDEX]}\n')
 
-    # todo: DESCRIPTION
+    # Decrease the price of the product for sale
     def discount(self, discount_rate, password):
+        try:
+            if self._user.password_validation(password) is not True:  # 1. Exceptions: Password Validation
+                raise WrongPassword
+            elif self.__for_sale is not True:  # 2. Exceptions: Product Availability, Validation
+                raise ProductSoldError
+            elif not (0 < discount_rate <= 100):  # 3. Exceptions: Logic Discount, Validation
+                raise InvalidDiscountError
+            price = self._post_data[PRICE_INDEX]  # Current Product Price
+            discount = price * (discount_rate / TOTAL_PERCENTAGE)  # Discount Price(number)
+            discounted_price = price - discount  # Product Price after Discount
+            self._post_data[
+                PRICE_INDEX] = discounted_price  # Changing the product price                print(f"Discount on {self._user.username} product! the new price is: {discounted_price:.1f}")
+        except (WrongPassword, ProductSoldError, Exception) as e:
+            print(e)
 
-        if self._user.check_password(password) is not True:
-            print("Invalid password")
-
-        elif self.__for_sale is not True:
-            print("Product already been Sold!")
-
-        elif not (0 < discount_rate <= 100):
-            print("Invalid discount rate, Must be between 1-100")
-
-        else:
-            discount = self.__price * (discount_rate / TOTAL_PERCENTAGE)
-            self.__price -= discount
-            print(f"Discount on {self.publisher_username} product! the new price is: {self.__price:.1f}")
-
-    # todo: DESCRIPTION
+    # Changing the status of the product to sold
     def sold(self, password):
-        if self._user.check_password(password) is not True:
-            print("Invalid password")
-        else:
+        try:
+            if self._user.password_validation(password) is not True:
+                raise WrongPassword
             self.__for_sale = False
-            print(f"{self.publisher_username}'s product is sold")
+            print(f"{self._user.username}'s product is sold")
+        except (WrongPassword, Exception) as e:
+            print(e)
