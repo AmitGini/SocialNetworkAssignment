@@ -1,7 +1,7 @@
 from CustomErrors import WrongPassword, WrongUsername, AlreadyFollowingError, NotFollowingError, NotConnectedError, \
     UserNotDefinedError, UserSubscribeItSelf
-from notification.Notification import Notification
-from notification.Notifier import Notifier
+from Notification import Notification
+from Notifier import Notifier
 from post.PostFactory import PostFactory
 
 

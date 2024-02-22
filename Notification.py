@@ -1,4 +1,4 @@
-from notification.Subscriber import Subscriber
+from Subscriber import Subscriber
 
 
 # todo: add description
