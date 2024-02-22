@@ -48,7 +48,7 @@ def main():
     p1.comment(u5, "A pivotal moment")
     p3.comment(u2, "Exorbitant price")
     print()
-    #
+
     # Price reduction of the product for sale
     p3.discount(10, "pass3")
     print()
@@ -71,12 +71,12 @@ def main():
 
     p2.comment(u5, "Amazing picture!")
     print()
-    #
+
     # Using unfollow
     u2.unfollow(u1)
     u3.unfollow(u2)
     print()
-    #
+
     # Using log_in & log_out
     network.log_out("Charlie")
     network.log_in("Charlie", "pass3")
@@ -95,7 +95,7 @@ def main():
     print()
 
     # Network printing
-    print(network, end='')
+    print(network)
 
 
 if __name__ == '__main__':

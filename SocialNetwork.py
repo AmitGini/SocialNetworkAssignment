@@ -25,10 +25,10 @@ class SocialNetwork:
 
     # Printing each notifier data, implement in notifier class
     def __str__(self):
-        social_network_data = f"{self._network_name} social network:\n"  # Initial Custom String
+        social_network_data = f"{self._network_name} social network:"  # Initial Custom String
         for username in self._users_data:  # Iterate on the notifier data dictionary
-            social_network_data += str(self._users_data[username])  # Building custom String for printing
             social_network_data += "\n"  # Add a newline as a separator between users
+            social_network_data += str(self._users_data[username])  # Building custom String for printing
         return social_network_data
 
     # Create new notifier to the social network, connected by default

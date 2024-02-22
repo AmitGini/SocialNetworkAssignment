@@ -26,4 +26,3 @@ class ImagePost(Posts):
             print("Shows picture")  # Printing display notification
         except Exception as e:
             print(e)
-            print("Something went wrong when trying to display the image, Check the directory path")

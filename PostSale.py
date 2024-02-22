@@ -46,7 +46,8 @@ class SalePost(Posts):
             discount = price * (discount_rate / TOTAL_PERCENTAGE)  # Discount Price(number)
             discounted_price = price - discount  # Product Price after Discount
             self._post_data[
-                PRICE_INDEX] = discounted_price  # Changing the product price                print(f"Discount on {self._user.username} product! the new price is: {discounted_price:.1f}")
+                PRICE_INDEX] = discounted_price  # Changing the product price
+            print(f"Discount on {self._user.username} product! the new price is: {discounted_price:.1f}")
         except (WrongPassword, ProductSoldError, Exception) as e:
             print(e)
 

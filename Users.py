@@ -1,3 +1,5 @@
+from CustomErrors import WrongPassword, WrongUsername, AlreadyFollowingError, NotFollowingError, NotConnectedError, \
+    UserNotDefinedError, UserSubscribeItSelf
 from notification.Notification import Notification
 from notification.Notifier import Notifier
 from post.PostFactory import PostFactory
@@ -31,7 +33,7 @@ class Users(Notifier):
     # Password Validation. using decode for compression
     def password_validation(self, password):
         try:
-            if 4 < len(password) <= 8:  # Layer of protection before decoding the original password
+            if 4 > len(password) > 8:  # Layer of protection before decoding the original password
                 raise WrongPassword
             temp_pass = self.__password_encode.decode('utf-8')
             if temp_pass != password:  # Comparing the password
@@ -47,7 +49,7 @@ class Users(Notifier):
     # Changing the connection value, for encapsulation, and understandable code
     def connect(self, password):
         try:
-            if password_validation(password) is False:
+            if self.password_validation(password) is False:
                 raise WrongPassword
             self.__connected = True
             return True
@@ -72,8 +74,8 @@ class Users(Notifier):
             if user.username in self.__following:  # Check self not following notifier Already
                 raise AlreadyFollowingError(user.username)
             self.__following.add(user.username)  # Add to following List
-            user.add_subscriber(
-                self)  # adding self from user subscriber list(users to notify by user actions)            print(f"{str(self.username)} started following {user.username}")  # printing the follow action
+            user.add_subscriber(self)  # adding self from user subscriber list(users to notify by user actions)
+            print(f"{str(self.username)} started following {user.username}")  # printing the follow action
         except (AlreadyFollowingError, Exception) as e:
             print(e)
 
