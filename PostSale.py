@@ -10,7 +10,7 @@ TOTAL_PERCENTAGE = 100
 
 # todo: DESCRIPTION
 
-class SalePost(Posts):
+class PostSale(Posts):
     __for_sale_ = None
 
     # Constructor for sale post, changing the _post_data and adding for sale, for product status

@@ -5,7 +5,7 @@ from Posts import Posts
 
 
 # todo: DESCRIPTION
-class ImagePost(Posts):
+class PostImage(Posts):
 
     def __init__(self, user, args):
         super().__init__(user, args)
