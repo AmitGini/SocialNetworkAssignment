@@ -1,9 +1,9 @@
-from Subscriber import Subscriber
+from Observer import Observer
 
 
 # todo: add description
 
-class Notification(Subscriber):
+class Notification(Observer):
 
     def __init__(self):
         super().__init__()

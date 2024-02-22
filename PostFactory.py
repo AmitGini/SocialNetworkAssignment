@@ -1,10 +1,11 @@
 from CustomErrors import InvalidPostTypeError, InvalidPostDataError
-from post.ImagePost import ImagePost
-from post.SalePost import SalePost
-from post.TextPost import TextPost
+from PostImage import PostImage
+from PostSale import PostSale
+from PostText import PostText
 
 
-# todo: DESCRIPTION
+# Factory Design Pattern
+# Post factory, static method, responsible to create the post according to the type
 class PostFactory:
     @staticmethod
     def create_post(user, post_type, *args):
@@ -13,11 +14,11 @@ class PostFactory:
                 raise InvalidPostDataError
             # Posts Creation By Type
             elif post_type == "Text":  # Text
-                return TextPost(user, args[0])  # Creating Text Post
+                return PostText(user, args[0])  # Creating Text Post
             elif post_type == "Image":  # Image
-                return ImagePost(user, args[0])  # Creating Image Post
+                return PostImage(user, args[0])  # Creating Image Post
             elif post_type == "Sale":  # Sale
-                return SalePost(user, *args)  # Creating Sale Post
+                return PostSale(user, *args)  # Creating Sale Post
             else:
                 raise InvalidPostTypeError
         except (InvalidPostTypeError, InvalidPostDataError, Exception) as e:

@@ -1,23 +1,22 @@
 from CustomErrors import WrongPassword, WrongUsername, AlreadyFollowingError, NotFollowingError, NotConnectedError, \
     UserNotDefinedError, UserSubscribeItSelf
 from Notification import Notification
-from Notifier import Notifier
-from post.PostFactory import PostFactory
+from NotificationService import NotificationService
+from PostFactory import PostFactory
 
 
-# todo: add description
-
-class Users(Notifier):
+# User Class, representing the users that signed up to the Social Network
+class Users(NotificationService):
     __password_encode = None
     __connected = None
     __following = None
     __post = None
 
-    # todo: add description
+    # User constructor, holding its data username and coded password, connection status, list of posts,
+    # users that he follow using set, and notification object that responsible to update the user subscribers
     def __init__(self, username, password):
         super().__init__()
         self.username = username
-        self.followers = 0
         self.notification = Notification()
         self.__password_encode = password.encode('utf-8')
         self.__connected = True
@@ -66,7 +65,8 @@ class Users(Notifier):
         except (WrongUsername, Exception) as e:
             print(e)
 
-    # Follow method, add to following set and adding to the subscribers
+    # Follow method, when self(user) use follow, the followed user being added to the following set
+    # And self being added to the subscribers set of the user he followed after for notification updates
     def follow(self, user):
         try:
             if self.__follow_exceptions(user):  # Exceptions Handling: self connected, user None, self is user
@@ -79,7 +79,8 @@ class Users(Notifier):
         except (AlreadyFollowingError, Exception) as e:
             print(e)
 
-    # UnFollow method,remove from the following set and removing from the subscribers
+    # Unfollow method, when self(user) use unfollow, the unfollowed user being removed from the following set
+    # And self being removed from the subscribers set of the user he unfollowed, and won't be notified anymore
     def unfollow(self, user):
         try:
             if self.__follow_exceptions(user):  # Exceptions Handling: self connected, user None, self is user
@@ -92,7 +93,7 @@ class Users(Notifier):
         except (NotFollowingError, Exception) as e:
             print(e)
 
-    # todo: add description
+    # method for publishing a post in Social Network by the user, if the user is connected
     def publish_post(self, post_type, *args):
         try:  # try Exceptions to make sure the program won't stop after encounter problem
             if not self.is_connected:  # Exception: Case User Not Connected
@@ -104,7 +105,7 @@ class Users(Notifier):
         except (NotConnectedError, Exception) as e:
             print(e)
 
-    # Printing all the personal notification that related to the post.
+    # Printing all the notification that related to the post.
     def print_notifications(self):
         try:
             if not self.is_connected():  # User Connected
@@ -113,7 +114,7 @@ class Users(Notifier):
         except (NotConnectedError, Exception) as e:
             print(e)
 
-    # Exception handling, for follow or unfollow methods
+    # Private method that handling the Exception, for follow or unfollow methods
     def __follow_exceptions(self, user):
         try:  # Exceptions Handling: self connected, user None, self is user
             if not self.is_connected():  # User Connected

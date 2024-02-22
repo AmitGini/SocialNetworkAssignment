@@ -1,19 +1,20 @@
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-from Posts import Posts
+from Post import Post
 
 
-# todo: DESCRIPTION
-class PostImage(Posts):
+# Factory Design Pattern
+# Image post implements post, contain path directory and show the image
+class PostImage(Post):
 
-    def __init__(self, user, args):
-        super().__init__(user, args)
+    def __init__(self, author, image_path):
+        super().__init__(author=author, data=image_path)
         print(self)
 
     # Special method being overridden, creating custom String for printing
     def __str__(self):
-        return f"{self._user.username} posted a picture\n"
+        return f"{self._author.username} posted a picture\n"
 
     # Responsible for showing the picture of a given path directory
     def display(self):

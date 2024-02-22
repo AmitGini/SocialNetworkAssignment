@@ -1,14 +1,13 @@
-# SocialNetwork class - Singleton Design Pattern
 from CustomErrors import SignUpError, SignInError, SignOutError
 from Users import Users
 
 
-# todo: DESCRIPTION
-
+# SocialNetwork class - Singleton Design Pattern
+# representing a social network that can be signed up new user, sign in or sign out, and saving users information (dict)
 class SocialNetwork:
-    _instance = None
-    _network_name = None
-    _user_data = None
+    _instance = None  # represent the single instance of the social network
+    _network_name = None  # the name of the network the given in the first creation
+    _user_data = None  # dictionary holding the username as a key and Users object as value
 
     # __new__ special method - creation of instances, cls is as self, **kwargs , keyboard words arguments
     # This method creating and returning a new instance of the class, only if there is no instance that exist
