@@ -1,12 +1,21 @@
 from CustomErrors import WrongPassword, WrongUsername, AlreadyFollowingError, NotFollowingError, NotConnectedError, \
     UserNotDefinedError, UserSubscribeItSelf
-from Notification import Notification
 from NotificationService import NotificationService
+from Observer import Observer
 from PostFactory import PostFactory
 
+'''                         # Observer Pattern design - Observer type #
+                        
+    # User Class - Implementing Observer
+    # representing the users in the social network, Users are observers(Concrete Observers) updates when publishing post
+        but also a Client that waiting to be notified when his following publishing his post,
+        and in general when receive comment or like on his post
+'''
 
-# User Class, representing the users that signed up to the Social Network
-class Users(NotificationService):
+
+class Users(Observer):
+    __static_notification_service = None
+    __notifications = None
     __password_encode = None
     __connected = None
     __following = None
@@ -17,17 +26,18 @@ class Users(NotificationService):
     def __init__(self, username, password):
         super().__init__()
         self.username = username
-        self.notification = Notification()
         self.__password_encode = password.encode('utf-8')
         self.__connected = True
         self.__following = set()
         self.__posts = list()
+        self.__notifications = list()
+        self.__static_notification_service = NotificationService()
 
     # Special method being overridden, creating custom String for printing
     def __str__(self):
         num_posts = len(
             self.__posts)  # Getting the length of the post list, it's the number of posts the notifier published
-        return f"User name: {self.username}, Number of posts: {num_posts}, Number of followers: {self.get_num_subscriber()}"
+        return f"User name: {self.username}, Number of posts: {num_posts}, Number of followers: {self.__static_notification_service.get_num_subscriber()}"
 
     # Password Validation. using decode for compression
     def password_validation(self, password):
@@ -74,7 +84,8 @@ class Users(NotificationService):
             if user.username in self.__following:  # Check self not following notifier Already
                 raise AlreadyFollowingError(user.username)
             self.__following.add(user.username)  # Add to following List
-            user.add_subscriber(self)  # adding self from user subscriber list(users to notify by user actions)
+            user.get_notification_service().add_subscriber(
+                self)  # adding self from user subscriber list(users to notify by user actions)
             print(f"{str(self.username)} started following {user.username}")  # printing the follow action
         except (AlreadyFollowingError, Exception) as e:
             print(e)
@@ -88,7 +99,7 @@ class Users(NotificationService):
             if user.username not in self.__following:  # Check self not following notifier Already
                 raise NotFollowingError(user.username)
             self.__following.remove(user.username)  # Remove from following List
-            user.remove_subscriber(self)  # Remove self from user subscriber list(users to notify by user actions)
+            user.get_notification_service().remove_subscriber(self)  # Remove self from user subscriber list(users to notify by user actions)
             print(f"{self.username} unfollowed {user.username}")  # printing the unfollow action
         except (NotFollowingError, Exception) as e:
             print(e)
@@ -100,19 +111,29 @@ class Users(NotificationService):
                 raise NotConnectedError(self.username)
             post = PostFactory.create_post(self, post_type, *args)  # Creating the post
             self.__posts.append(post)  # Adding to the posts list
-            self.notify_all_subscriber(f"{self.username} has a new post")  # Sending notification to all the subscribers
+            self.get_notification_service().notify_all_subscriber(f"{self.username} has a new post")  # notify all self subscribers
             return post  # Returning the post object
         except (NotConnectedError, Exception) as e:
             print(e)
 
-    # Printing all the notification that related to the post.
+    # updating the user, by adding the message to its notification list
+    def update(self, message):
+        self.__notifications.append(message)
+
+    # Iterate over the notification list and printing them from the first(oldest) to the last(newest)
     def print_notifications(self):
         try:
-            if not self.is_connected():  # User Connected
+            if not self.is_connected():  # Check User Connected
                 raise NotConnectedError(self.username)
-            self.notification.display_notification(self.username)
-        except (NotConnectedError, Exception) as e:
+            print(f"{self.username}'s notifications:")  # Printing tile
+            for notification in self.__notifications:  # Printing all the notification the user received
+                print(notification)
+        except (NotConnectedError, Exception) as e:  # Exception message
             print(e)
+
+    # return the notification service, since it's a private field
+    def get_notification_service(self):
+        return self.__static_notification_service
 
     # Private method that handling the Exception, for follow or unfollow methods
     def __follow_exceptions(self, user):

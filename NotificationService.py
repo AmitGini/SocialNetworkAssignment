@@ -31,7 +31,7 @@ class NotificationService:
         if message is not None and len(self._subscribers) > 0:
             try:
                 for subscriber in self._subscribers:
-                    subscriber.notification.update(message)
+                    subscriber.update(message)
             except Exception as e:
                 print(e)
                 print("Notify subscribers Failed!")
