@@ -10,13 +10,8 @@ class Post(ABC):
     _comments = None  # protected field of all comments on this post
 
     # Initializes a new post instance with the given user and data.
-    def __init__(self, author, data):
-        """
-        :param author: protected field of The user who created the post.
-        :param data: protected field of The content of the post
-        """
-        self._author = author  # user of Users class
-        self._post_data: dict = data  # dictionary holding the post data
+    def __init__(self, author):
+        self._author = author  # The user published the post
         self._likes: set = set()  # set of all the usernames that liked this post
         self._comments: list[tuple] = list(
             tuple())  # list of tuples, every tuple contain (string=username, string=comment)
@@ -53,3 +48,4 @@ class Post(ABC):
                     f"notification to {self._author.username}: {user.username} commented on your post: {comment_data}")
         except (NotConnectedError, EmptyCommentError, Exception) as e:  # catching specific exceptions
             print(e)
+

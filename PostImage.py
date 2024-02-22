@@ -8,8 +8,9 @@ from Post import Post
 # Image post implements post, contain path directory and show the image
 class PostImage(Post):
 
-    def __init__(self, author, image_path):
-        super().__init__(author=author, data=image_path)
+    def __init__(self, author, image_url):
+        super().__init__(author=author)
+        self.__image_url = image_url
         print(self)
 
     # Special method being overridden, creating custom String for printing
@@ -19,7 +20,7 @@ class PostImage(Post):
     # Responsible for showing the picture of a given path directory
     def display(self):
         try:
-            image_path = self._post_data  # Load the image file
+            image_path = self.__image_url  # Load the image file
             img = mpimg.imread(image_path)  # Load the image file
             plt.imshow(img)  # Display the image
             plt.axis('off')  # Display the image - Removing scales
