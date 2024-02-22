@@ -1,8 +1,8 @@
-# todo: add description
 from CustomErrors import SubscriberNotFoundError
 
 
-class Notifier:
+# Observer Design Pattern - Publisher/Subject
+class NotificationService:
     _subscribers = None
 
     def __init__(self):
