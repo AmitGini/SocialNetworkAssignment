@@ -9,4 +9,4 @@ class TextPost(Posts):
 
     # Special method being overridden, creating custom String for printing
     def __str__(self):
-        return f'{self._user.username} published a post:\n{self._post_data}\"\n'
+        return f'{self._user.username} published a post:\n\"{self._post_data}\"\n'

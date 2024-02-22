@@ -28,7 +28,7 @@ class Posts:
             self._likes.add(user.username)  # Adding Like to the list of the post comments
             if self._user.username != user.username:  # Notify if the user that liked and post publisher user are different
                 self._user.notification.update(f'{user.username} liked your post')
-                print(f"{user.username} liked your post")
+                print(f"notification to {self._user.username}: {user.username} liked your post")
         except (NotConnectedError, AlreadyLikedError, Exception) as e:  # catching specific exceptions
             print(e)
 
@@ -42,6 +42,6 @@ class Posts:
             self._comments.append((user.username, comment_data))  # Adding Comment to the list of the post comments
             if self._user.username != user.username:  # Notify if the user of that commented and post publisher user are different
                 self._user.notification.update(f"{user.username} commented on your post")
-                print(f"notification to {self._user.username}: commented on your post: {comment_data}")
+                print(f"notification to {self._user.username}: {user.username} commented on your post: {comment_data}")
         except (NotConnectedError, EmptyCommentError, Exception) as e:  # catching specific exceptions
             print(e)
