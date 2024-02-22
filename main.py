@@ -94,7 +94,7 @@ def main():
     u4.print_notifications()
     print()
 
-    # Network printing
+    # Network printin g
     print(network)
 
 
