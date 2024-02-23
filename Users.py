@@ -44,12 +44,13 @@ class Users(Observer):
         try:
             if 4 > len(password) > 8:  # Layer of protection before decoding the original password
                 raise WrongPassword
-            temp_pass = self.__password_encode.decode('utf-8')
-            if temp_pass != password:  # Comparing the password
+            elif self.__password_encode.decode('utf-8') != password:  # Comparing the password
                 raise WrongPassword
-            return True
+            else:
+                return True
         except (WrongPassword, Exception) as e:
             print(e)
+            return False
 
     # check the connection value, for encapsulation, and understandable code
     def is_connected(self):
@@ -57,36 +58,32 @@ class Users(Observer):
 
     # Changing the connection value, for encapsulation, and understandable code
     def connect(self, password):
-        try:
-            if self.password_validation(password) is False:
-                raise WrongPassword
+        if self.password_validation(password) is False:
+            return False
+        else:
             self.__connected = True
             return True
-        except (WrongPassword, Exception) as e:
-            print(e)
 
     # Changing the connection value, for encapsulation, and understandable code
     def disconnect(self, username):
-        try:
-            if self.username is not username:
-                raise WrongUsername
+        if self.username is not username:
+            print(WrongUsername)
+        else:
             self.__connected = False
             return True
-        except (WrongUsername, Exception) as e:
-            print(e)
 
     # Follow method, when self(user) use follow, the followed user being added to the following set
     # And self being added to the subscribers set of the user he followed after for notification updates
     def follow(self, user):
         try:
             if self.__follow_exceptions(user):  # Exceptions Handling: self connected, user None, self is user
-                pass
-            if user.username in self.__following:  # Check self not following notifier Already
+                pass  # raise exception in the __follow_exceptions method
+            elif user.username in self.__following:  # Check self not following notifier Already
                 raise AlreadyFollowingError(user.username)
-            self.__following.add(user.username)  # Add to following List
-            user.get_notification_service().add_subscriber(
-                self)  # adding self from user subscriber list(users to notify by user actions)
-            print(f"{str(self.username)} started following {user.username}")  # printing the follow action
+            else:
+                self.__following.add(user.username)  # Add to following List
+                user.get_notification_service().add_subscriber(self)  # adding self from user subscriber list(users to notify by user actions)
+                print(f"{str(self.username)} started following {user.username}")  # printing the follow action
         except (AlreadyFollowingError, Exception) as e:
             print(e)
 
@@ -96,11 +93,12 @@ class Users(Observer):
         try:
             if self.__follow_exceptions(user):  # Exceptions Handling: self connected, user None, self is user
                 pass
-            if user.username not in self.__following:  # Check self not following notifier Already
+            elif user.username not in self.__following:  # Check self not following notifier Already
                 raise NotFollowingError(user.username)
-            self.__following.remove(user.username)  # Remove from following List
-            user.get_notification_service().remove_subscriber(self)  # Remove self from user subscriber list(users to notify by user actions)
-            print(f"{self.username} unfollowed {user.username}")  # printing the unfollow action
+            else:
+                self.__following.remove(user.username)  # Remove from following List
+                user.get_notification_service().remove_subscriber(self)  # Remove self from user subscriber list(users to notify by user actions)
+                print(f"{self.username} unfollowed {user.username}")  # printing the unfollow action
         except (NotFollowingError, Exception) as e:
             print(e)
 
@@ -109,12 +107,15 @@ class Users(Observer):
         try:  # try Exceptions to make sure the program won't stop after encounter problem
             if not self.is_connected:  # Exception: Case User Not Connected
                 raise NotConnectedError(self.username)
-            post = PostFactory.create_post(self, post_type, *args)  # Creating the post
-            self.__posts.append(post)  # Adding to the posts list
-            self.get_notification_service().notify_all_subscriber(f"{self.username} has a new post")  # notify all self subscribers
-            return post  # Returning the post object
+            else:
+                post = PostFactory.create_post(self, post_type, *args)  # Creating the post
+                if post is not None:
+                    self.__posts.append(post)  # Adding to the posts list
+                    self.get_notification_service().notify_all_subscriber(f"{self.username} has a new post")  # notify all self subscribers
+                    return post  # Returning the post object
         except (NotConnectedError, Exception) as e:
             print(e)
+            return None
 
     # updating the user, by adding the message to its notification list
     def update(self, message):
@@ -125,9 +126,10 @@ class Users(Observer):
         try:
             if not self.is_connected():  # Check User Connected
                 raise NotConnectedError(self.username)
-            print(f"{self.username}'s notifications:")  # Printing tile
-            for notification in self.__notifications:  # Printing all the notification the user received
-                print(notification)
+            else:
+                print(f"{self.username}'s notifications:")  # Printing tile
+                for notification in self.__notifications:  # Printing all the notification the user received
+                    print(notification)
         except (NotConnectedError, Exception) as e:  # Exception message
             print(e)
 
@@ -146,3 +148,4 @@ class Users(Observer):
                 raise UserSubscribeItSelf
         except (NotConnectedError, UserNotDefinedError, UserSubscribeItSelf, Exception) as e:
             print(e)
+            return True

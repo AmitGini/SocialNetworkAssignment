@@ -16,18 +16,18 @@ class SocialNetwork:
         if cls._instance is None:
             cls._network_name = name  # network name initialize
             cls._users_data = dict()  # _user_data -> [ key = username : value = notifier(Object) ]
+            cls._instance = super(SocialNetwork, cls).__new__(cls)  # SocialNetwork single instance initialize
             print(f"The social network {name} was created!")
         else:
             print("Network Already Exists, Creation Failed!")
-        cls._instance = super(SocialNetwork, cls).__new__(cls)  # SocialNetwork single instance initialize
         return cls._instance
 
     # Printing each notifier data, implement in notifier class
     def __str__(self):
-        social_network_data = f"{self._network_name} social network:"  # Initial Custom String
+        social_network_data = f"{self._network_name} social network:\n"  # Initial Custom String
         for username in self._users_data:  # Iterate on the notifier data dictionary
-            social_network_data += "\n"  # Add a newline as a separator between users
             social_network_data += str(self._users_data[username])  # Building custom String for printing
+            social_network_data += "\n"  # Add a newline as a separator between users
         return social_network_data
 
     # Create new notifier to the social network, connected by default
@@ -41,11 +41,13 @@ class SocialNetwork:
                 raise SignUpError("Password must be between 4 and 8 characters.")
             elif "'" in username or "(" in username or ")" in username or "," in username:  # 4. Exceptions: Invalid Chars
                 raise SignUpError("Username contains invalid characters.")
-            concrete_user = Users(username, password)  # Creating User Object
-            self._users_data[username] = concrete_user  # Adding User Object to the dictionary data
-            return concrete_user  # Return the notifier Object
+            else:
+                concrete_user = Users(username, password)  # Creating User Object
+                self._users_data[username] = concrete_user  # Adding User Object to the dictionary data
+                return concrete_user  # Return the notifier Object
         except (SignUpError, Exception) as e:
             print(e)
+            return None
 
     # Log in, responsible for information validation and entering the notifier account - access for notifier actions
     def log_in(self, username, password):
@@ -56,10 +58,12 @@ class SocialNetwork:
                 raise SignInError("Username does not exist.")
             elif self._users_data[username].is_connected():  # 3. Exceptions: User Connection Validation
                 raise SignInError("User is already connected.")
-            elif self._users_data[username].connect(password):  # Changing User Status to connected, Password validation happened in the connect method and return if succeed
+            elif self._users_data[username].connect(password):  # Changing User Status to connected + Password validation happened in the connect method and return if succeed
                 print(f"{username} connected")
+                return self._users_data[username]
         except (SignInError, Exception) as e:
             print(e)
+            return None
 
     # Log out, responsible for validate the username and disconnect the notifier account - prevent notifier actions
     def log_out(self, username):

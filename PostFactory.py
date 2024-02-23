@@ -32,3 +32,4 @@ class PostFactory:
                 raise InvalidPostTypeError
         except (InvalidPostTypeError, InvalidPostDataError, Exception) as e:
             print(e)
+            return None
