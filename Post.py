@@ -1,7 +1,7 @@
 from CustomErrors import NotConnectedError, AlreadyLikedError, EmptyCommentError
 from abc import ABC, abstractmethod
 
-
+# Structure Design pattern
 # Interface Post Class, representing general post methods and fields.
 class Post(ABC):
     _author = None  # protected field of user(Users class) created this post

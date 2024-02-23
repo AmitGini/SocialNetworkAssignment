@@ -1,7 +1,7 @@
 from CustomErrors import WrongPassword, ProductSoldError, InvalidDiscountError
 from Post import Post
 
-# Factory Design Pattern
+# Structure Design pattern
 TOTAL_PERCENTAGE = 100  # Represent the total percentage of discount calculations
 
 
