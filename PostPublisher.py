@@ -6,5 +6,4 @@ from NotificationService import NotificationService
 class PostPublisher(NotificationService):
     def send_new_post_notification(self, username):
         message = f"{username} has a new post"
-        print(message)
         self.notify(message)
