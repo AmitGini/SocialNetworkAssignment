@@ -46,6 +46,10 @@ class UserSubscribeItSelf(Exception):
         message = "Follow/Unfollow yourself is an illegal Action!"
         super().__init__(message)
 
+class PostPublisherFailed(Exception):
+    def __init__(self):
+        message = "Due to invalid parameters post creation failed"
+        super().__init__(message)
 
 class AlreadyLikedError(Exception):
     def __init__(self, username=None):
@@ -62,23 +66,6 @@ class AlreadyFollowingError(Exception):
 class NotFollowingError(Exception):
     def __init__(self, username=None):
         message = f"Can't unfollow {username}; you are not following them." if username else "You are not following this user."
-        super().__init__(message)
-
-
-class InvalidPostTypeError(TypeError):
-    def __init__(self, message="Invalid post type. Available types are: Text, Image, Sale."):
-        super().__init__(message)
-
-
-class InvalidPostDataError(TypeError):
-    def __init__(self,
-                 message="Invalid post data, must contain at least 1 Characters"):
-        super().__init__(message)
-
-
-class SalePostCreationError(TypeError):
-    def __init__(self,
-                 message="Invalid post data, Sale - Product description at least 1 char, price - only positive numbers, location, at least 1 chars"):
         super().__init__(message)
 
 
@@ -104,6 +91,3 @@ class SubscriberNotFoundError(ValueError):
         super().__init__(message)
 
 
-class InvalidSubscriberError(ValueError):
-    def __init__(self, message="Invalid subscriber action performed"):
-        super().__init__(message)

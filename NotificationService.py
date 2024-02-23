@@ -1,8 +1,12 @@
+from abc import ABC
+
 from CustomErrors import SubscriberNotFoundError
 
 
-# Observer Design Pattern - Publisher/Subject
-class NotificationService:
+# Observer Design Pattern - abstract (Publisher/Sender)
+# abstract class that responsible to add or remove from the subscribers list of specific user
+#           and also responsible to notify the subscribers of specific user
+class NotificationService(ABC):
     _subscribers = None
 
     def __init__(self):
@@ -27,7 +31,7 @@ class NotificationService:
             print(e)
 
     # Sending notification to all the subscribers of a specific user (all users follow after user)
-    def notify_all_subscriber(self, message):
+    def notify(self, message):
         if message is not None and len(self._subscribers) > 0:
             try:
                 for subscriber in self._subscribers:

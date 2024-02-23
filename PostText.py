@@ -1,7 +1,7 @@
 from Post import Post
 
 
-# Factory Design Pattern
+# Structure Design pattern
 # Text Post implements Post, contain textual data only
 class PostText(Post):
     def __init__(self, author, text):
