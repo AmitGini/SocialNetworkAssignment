@@ -1,4 +1,4 @@
-from CustomErrors import SalePostCreationError, WrongPassword, ProductSoldError, InvalidDiscountError
+from CustomErrors import WrongPassword, ProductSoldError, InvalidDiscountError
 from Post import Post
 
 # Factory Design Pattern
@@ -25,23 +25,23 @@ class PostSale(Post):
     # Special method being overridden, to print the data as required.
     def __str__(self):
         return (f'{self._author.username} posted a product for sale:\n{self.__for_sale} {self.__product},'
-                f' price: {self.__price}, pickup from: {self.__location}\n')
+                f' price: {self.__price}, pickup from: {self.__location}\n').strip()
 
     # Decrease the price of the product for sale
     def discount(self, discount_rate, password):
         try:
-            if self._author.password_validation(password) is not True:  # 1. Exceptions: Password Validation
-                raise WrongPassword
+            if self._author.password_validation(password) is False:  # 1. Exceptions: Password Validation
+                pass  # Raise Exception in the password_validation
             elif self.__for_sale == "Sold!":  # 2. Exceptions: Product Availability, Validation
                 raise ProductSoldError
-            elif not (
-                    0 < discount_rate <= TOTAL_PERCENTAGE):  # 3. Exceptions: Logic Discount (max discount 100), Validation
+            elif not (0 < discount_rate <= TOTAL_PERCENTAGE):  # 3. Exceptions: Logic Discount (max discount 100), Validation
                 raise InvalidDiscountError
-            price = self.__price  # Current Product Price
-            discount = price * (discount_rate / TOTAL_PERCENTAGE)  # Discount Price(number)
-            discounted_price = price - discount  # Product Price after Discount
-            self.__price = discounted_price  # Changing the product price
-            print(f"Discount on {self._author.username} product! the new price is: {discounted_price:.1f}")
+            else:
+                price = self.__price  # Current Product Price
+                discount = price * (discount_rate / TOTAL_PERCENTAGE)  # Discount Price(number)
+                discounted_price = price - discount  # Product Price after Discount
+                self.__price = discounted_price  # Changing the product price
+                print(f"Discount on {self._author.username} product! the new price is: {discounted_price:.1f}")
         except (WrongPassword, ProductSoldError, Exception) as e:
             print(e)
 
@@ -49,8 +49,11 @@ class PostSale(Post):
     def sold(self, password):
         try:
             if self._author.password_validation(password) is not True:
-                raise WrongPassword
-            self.__for_sale = "Sold!"
-            print(f"{self._author.username}'s product is sold")
-        except (WrongPassword, Exception) as e:
+                pass  # Raise Exception in the password_validation
+            elif self.__for_sale == "Sold!":
+                raise ProductSoldError
+            else:
+                self.__for_sale = "Sold!"
+                print(f"{self._author.username}'s product is sold")
+        except (ProductSoldError, Exception) as e:
             print(e)
