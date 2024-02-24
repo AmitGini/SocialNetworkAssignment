@@ -1,5 +1,6 @@
 from NotificationService import NotificationService
 
+
 # Observer - Design pattern
 # Concrete NotificationService implementation of NotificationService
 # (Concrete NotificationService/ Concrete Sender)

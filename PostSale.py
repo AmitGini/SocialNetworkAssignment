@@ -1,17 +1,13 @@
 from CustomErrors import WrongPassword, ProductSoldError, InvalidDiscountError
 from Post import Post
 
-# Structure Design pattern
 TOTAL_PERCENTAGE = 100  # Represent the total percentage of discount calculations
 
 
+#                   Structure Design pattern
 # Sale post implements post, represent post of sale with product description, price and location
 # can discount and update the state of the product (for sale or sold)
 class PostSale(Post):
-    __product = None  # product description
-    __price = None  # product price
-    __location = None  # product location
-    __for_sale_ = None  # status of the product
 
     # Constructor for sale post, changing the _post_data and adding for sale, for product status
     def __init__(self, author, product, price, location):
@@ -34,7 +30,8 @@ class PostSale(Post):
                 pass  # Raise Exception in the password_validation
             elif self.__for_sale == "Sold!":  # 2. Exceptions: Product Availability, Validation
                 raise ProductSoldError
-            elif not (0 < discount_rate <= TOTAL_PERCENTAGE):  # 3. Exceptions: Logic Discount (max discount 100), Validation
+            elif not (
+                    0 < discount_rate <= TOTAL_PERCENTAGE):  # 3. Exceptions: Logic Discount (max discount 100), Validation
                 raise InvalidDiscountError
             else:
                 price = self.__price  # Current Product Price
@@ -47,13 +44,10 @@ class PostSale(Post):
 
     # Changing the status of the product to sold
     def sold(self, password):
-        try:
-            if self._author.password_validation(password) is not True:
-                pass  # Raise Exception in the password_validation
-            elif self.__for_sale == "Sold!":
-                raise ProductSoldError
-            else:
-                self.__for_sale = "Sold!"
-                print(f"{self._author.username}'s product is sold")
-        except (ProductSoldError, Exception) as e:
-            print(e)
+        if self._author.password_validation(password) is not True:
+            pass  # Raise Exception in the password_validation
+        elif self.__for_sale == "Sold!":
+            print(ProductSoldError)
+        else:
+            self.__for_sale = "Sold!"
+            print(f"{self._author.username}'s product is sold")

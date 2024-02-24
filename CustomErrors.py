@@ -21,14 +21,6 @@ class WrongPassword(PermissionError):
         super().__init__(message)
 
 
-class WrongUsername(PermissionError):
-    def __init__(self):
-        message = "Wrong Username! Please try!"
-        super().__init__(message)
-
-
-#  User and Posts Errors
-
 class NotConnectedError(PermissionError):
     def __init__(self, username=None):
         message = f"{username} Not connected! Please try Log In first." if username else "Not connected! Please try Log In first."
@@ -46,10 +38,6 @@ class UserSubscribeItSelf(Exception):
         message = "Follow/Unfollow yourself is an illegal Action!"
         super().__init__(message)
 
-class PostPublisherFailed(Exception):
-    def __init__(self):
-        message = "Due to invalid parameters post creation failed"
-        super().__init__(message)
 
 class AlreadyLikedError(Exception):
     def __init__(self, username=None):
@@ -89,5 +77,3 @@ class EmptyCommentError(ValueError):
 class SubscriberNotFoundError(ValueError):
     def __init__(self, message="Subscriber is Not defined"):
         super().__init__(message)
-
-

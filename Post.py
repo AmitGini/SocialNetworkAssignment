@@ -1,16 +1,14 @@
 from CustomErrors import NotConnectedError, AlreadyLikedError, EmptyCommentError
 from abc import ABC, abstractmethod
 
+
 # Structure Design pattern
 # Interface Post Class, representing general post methods and fields.
 class Post(ABC):
-    _author = None  # protected field of user(Users class) created this post
-    _likes = None  # protected field of all the username that liked this post
-    _comments = None  # protected field of all comments on this post
 
     # Initializes a new post instance with the given user and data.
     def __init__(self, author):
-        self._author = author  # The user published the post
+        self._author = author  # owner of the post
         self._likes: set = set()  # set of all the usernames that liked this post
         self._comments: list[tuple] = list(tuple())  # list of tuples, every tuple contain (string=username, string=comment)
 
@@ -43,8 +41,9 @@ class Post(ABC):
             else:
                 self._comments.append((user.username, comment_data))  # Adding Comment to the list of the post comments
                 if self._author.username != user.username:  # Notify if the user of that commented and post publisher user are different
-                    self._author.update(f"{user.username} commented on your post")  # Sending update(notification) to author
-                    print(f"notification to {self._author.username}: {user.username} commented on your post: {comment_data}")  # printing
+                    self._author.update(
+                        f"{user.username} commented on your post")  # Sending update(notification) to author
+                    print(
+                        f"notification to {self._author.username}: {user.username} commented on your post: {comment_data}")  # printing
         except (NotConnectedError, EmptyCommentError, Exception) as e:  # catching specific exceptions
             print(e)
-

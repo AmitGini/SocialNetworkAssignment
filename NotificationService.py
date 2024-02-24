@@ -7,7 +7,6 @@ from CustomErrors import SubscriberNotFoundError
 # abstract class that responsible to add or remove from the subscribers list of specific user
 #           and also responsible to notify the subscribers of specific user
 class NotificationService(ABC):
-    _subscribers = None
 
     def __init__(self):
         self._subscribers = set()

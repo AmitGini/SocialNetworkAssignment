@@ -4,7 +4,7 @@ import matplotlib.image as mpimg
 from Post import Post
 
 
-# Structure Design pattern
+#                           Structure Design pattern
 # Image post implements post, contain path directory and show the image
 class PostImage(Post):
 
