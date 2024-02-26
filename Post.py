@@ -10,12 +10,12 @@ class Post(ABC):
     def __init__(self, author):
         self._author = author  # owner of the post
         self._likes: set = set()  # set of all the usernames that liked this post
-        self._comments: list[tuple] = list(tuple())  # list of tuples, every tuple contain (string=username, string=comment)
+        self._comments: list[tuple] = list(
+            tuple())  # list of tuples, every tuple contain (string=username, string=comment)
 
     @abstractmethod
     def __str__(self):
         pass
-
 
     # Adding like to the post and notify the post publisher(user)
     def like(self, user):
