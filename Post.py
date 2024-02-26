@@ -16,6 +16,7 @@ class Post(ABC):
     def __str__(self):
         pass
 
+
     # Adding like to the post and notify the post publisher(user)
     def like(self, user):
         try:  # try Exceptions to make sure the program won't stop after encounter problem

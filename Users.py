@@ -1,7 +1,7 @@
 from CustomErrors import WrongPassword, AlreadyFollowingError, NotFollowingError, NotConnectedError, \
     UserNotDefinedError, UserSubscribeItSelf
-from PostPublisher import PostPublisher
-from Subscriber import Subscriber
+from PostNotifier import PostNotifier
+from ISubscriber import ISubscriber
 from PostFactory import PostFactory
 
 '''                         
@@ -12,14 +12,14 @@ from PostFactory import PostFactory
             like/comment or publishing a post, user will be notify when other user publish a post only if he follow
             after that user means hes part of that author post subscribers 
 '''
-class Users(Subscriber):
+class Users(ISubscriber):
 
     # User constructor, holding its data username and coded password, connection status, list of posts,
     # users that he follow using set, and notification object that responsible to update the user subscribers
     def __init__(self, username, password):
         super().__init__()
         self.username = username
-        self.post_publisher = PostPublisher()
+        self.post_notifier = PostNotifier()
         self.__password_encode = password.encode('utf-8')
         self.__connected = True
         self.__following = set()
@@ -28,7 +28,7 @@ class Users(Subscriber):
 
     # Special method being overridden, creating custom String for printing
     def __str__(self):
-        return f"User name: {self.username}, Number of posts: {self.__num_posts}, Number of followers: {self.post_publisher.get_num_subscriber()}"
+        return f"User name: {self.username}, Number of posts: {self.__num_posts}, Number of followers: {self.post_notifier.get_num_subscriber()}"
 
     # Password Validation. using decode for compression
     def password_validation(self, password):
@@ -73,7 +73,7 @@ class Users(Subscriber):
                 raise AlreadyFollowingError(user.username)
             else:
                 self.__following.add(user.username)  # Add to following List
-                user.post_publisher.add_subscriber(
+                user.post_notifier.add_subscriber(
                     self)  # adding self from user subscriber list(users to notify by user actions)
                 print(f"{str(self.username)} started following {user.username}")  # printing the follow action
         except (AlreadyFollowingError, Exception) as e:
@@ -89,7 +89,7 @@ class Users(Subscriber):
                 raise NotFollowingError(user.username)
             else:
                 self.__following.remove(user.username)  # Remove from following List
-                user.post_publisher.remove_subscriber(self)  # Remove self from user subscriber list(users to notify by user actions)
+                user.post_notifier.remove_subscriber(self)  # Remove self from user subscriber list(users to notify by user actions)
                 print(f"{self.username} unfollowed {user.username}")  # printing the unfollow action
         except (NotFollowingError, Exception) as e:
             print(e)
@@ -110,7 +110,7 @@ class Users(Subscriber):
 
         # Post creation was successful, proceed with adding to the user's posts and notifying subscribers.
         self.__num_posts += 1
-        self.post_publisher.send_new_post_notification(self.username)
+        self.post_notifier.send_new_post_notification(self.username)
         return post
 
     # updating the user, by adding the message to its notification list
