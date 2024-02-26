@@ -73,8 +73,7 @@ class Users(ISubscriber):
                 raise AlreadyFollowingError(user.username)
             else:
                 self.__following.add(user.username)  # Add to following List
-                user.post_notifier.add_subscriber(
-                    self)  # adding self from user subscriber list(users to notify by user actions)
+                user.post_notifier.add_subscriber(self)  # adding self from user subscriber list(users to notify by user actions)
                 print(f"{str(self.username)} started following {user.username}")  # printing the follow action
         except (AlreadyFollowingError, Exception) as e:
             print(e)
