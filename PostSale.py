@@ -20,8 +20,7 @@ class PostSale(Post):
 
     # Special method being overridden, to print the data as required.
     def __str__(self):
-        return (f'{self._author.username} posted a product for sale:\n{self.__for_sale} {self.__product},'
-                f' price: {self.__price}, pickup from: {self.__location}\n').strip()
+        return f'{self._author.username} posted a product for sale:\n{self.__for_sale} {self.__product}, price: {self.__price}, pickup from: {self.__location}\n'
 
     # Decrease the price of the product for sale
     def discount(self, discount_rate, password):
